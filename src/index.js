@@ -135,7 +135,7 @@ app.get('/tasks/:id', async (req, res) => {
 
 app.patch('/tasks/:id',async (req, res) => {
     const reqUpdates = Object.keys(req.body);
-    allowedUpdates = ['completed'];
+    allowedUpdates = ['description','completed'];
     const isValidUpdate = reqUpdates.every((update)=> allowedUpdates.includes(update));
     if (!isValidUpdate) return res.status(400).send('Invalid update operation');
     try {
