@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {{!-- <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge"> --}}
+    <link rel="stylesheet" href="./css/styles.css">
+    <link rel="icon" href="/img/weather-icon.png">
+    
+    <title>Home- Weather</title>
+</head>
+<body>
+    <div class="main-content">
+        {{>header}}
+        <h2>Tasks</h2>
+        <div class="pending-tasks-section">
+            <p>Pending Tasks</p>
+            <ul class="pending-tasks">
+                {{!-- <script id="tasks-pending" type="text/x-handlebars-template"> --}}
+                    {{#each pendingTasks}}
+                        <li><p>{{description}}</p> <button class="is-completed" >Mark as Complete</button> <button class="removeTask">Remove Task</button></li> 
+                        {{!-- see if above code is correct --}}
+                    {{/each}}
+                {{!-- </script> --}}
+            </ul>
+        </div>
+        <div class="create-task-section">
+            <h3>create a task</h3>
+            <input class="task-description" type="text" placeholder="Task Description">
+            <button class="create-task">Create Task</button>
+        </div>
+        <div class="view-all-tasks">
+           <button class="viewTasks"> View All Tasks</button>
+           <script id="view-tasks" type="text/x-handlebars-template">
+                    {{#each tasks}}
+                        <li><p>{{description}}</p> <button class="is-completed" >Mark as Complete</button> <button class="removeTask">Remove Task</button></li> 
+                        {{!-- see whether above code is correct --}}
+                    {{/each}}
+                </script>
+        </div>
+    </div>
+    {{>footer}}
+</body>

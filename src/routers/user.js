@@ -1,5 +1,7 @@
 const express = require('express');
 const User = require('../models/user');
+const auth = require('../middleware/auth');
+
 const router = new express.Router();
 
 
@@ -10,8 +12,9 @@ router.post('/users', async (req, res)=> {
     console.log(req.body);
     try {
         await user.save();
-        res.status(201).send(user);
-    } catch (e) {
+        const token = await user.generateAuthToken()
+        res.status(201).send({user, token});
+    } catch (error) {
         res.status(400).send(error)
     }
 
@@ -23,16 +26,61 @@ router.post('/users', async (req, res)=> {
     // });
 })
 
-// Read -> Get all USERS
-router.get('/users', async (req, res)=> {
-    const getUsers = await User.find({});
+// log in 
+router.post('/users/login', async (req, res) => {
     try {
-        res.send(getUsers);
-    } catch(error) {
-        res.status(500).send('Service Down');
+        const user = await User.findByCredentials(req.body.email, req.body.password);
+        const token = await user.generateAuthToken()
+        res.send({ user, token});
+    } catch (error) {
+        res.status(400).send('Unable to Login')
     }
-});
+ })
 
+
+ // Log out 
+router.post('/users/logout',auth, async (req, res) => {
+    try {
+        // search for the token of that session and log out of that
+        req.user.tokens = req.user.tokens.filter((token)=> {
+            return token.token !== req.token;
+        });
+
+        await req.user.save();
+        res.send()
+    } catch(error) {
+        res.send('User already logged out');
+    }
+})
+
+// Logout of all sessions
+router.post('/users/logoutAll', auth, async (req, res) => {
+    try {
+        req.user.tokens = [];
+        await req.user.save();
+
+        res.send('Successfully logged out of all the sessions');
+
+    } catch(error) {
+        res.status(500).send(error);
+    }
+})
+
+
+// Read -> Get all USERS
+// router.get('/users', async (req, res)=> {
+//     const getUsers = await User.find({});
+//     try {
+//         res.send(getUsers);
+//     } catch(error) {
+//         res.status(500).send('Service Down');
+//     }
+// });
+
+// read my profile, Authentication using middle ware
+router.get('/users/me', auth, async (req, res) => {
+    res.send(req.user);
+})
 // Read -> Get one user
 
 router.get('/users/:id', async (req, res) => {
@@ -60,7 +108,14 @@ router.patch('/users/:id', async (req, res) => {
     }
     const _id = req.params.id;
     try {
-        const user = await User.findByIdAndUpdate(_id, req.body, {new: true, runValidators: true});
+        // if pwd is updated, hash it first  -> for that we perform save operation instead of update
+        const user = await User.findById(_id);
+
+        updates.forEach((update) => user[update] = req.body[update]);
+
+        await user.save();
+
+        // const user = await User.findByIdAndUpdate(_id, req.body, {new: true, runValidators: true});
         if (!user) {
             res.status(404).send('User Not Found')
         }
