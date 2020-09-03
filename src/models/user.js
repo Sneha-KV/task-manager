@@ -3,6 +3,8 @@ const validator = require('validator');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
+const Task = require('./task')
+
 // pass the schema -> the second paramenter to model is converted to Schema by mongoose
 const userSchema = new mongoose.Schema({
     name: {
@@ -53,6 +55,13 @@ const userSchema = new mongoose.Schema({
     }]
 })
 
+// Create a virtual relation between user and Tasks
+userSchema.virtual('tasks', {
+    ref: 'Task',
+    localField: '_id',
+    foreignField: 'owner'
+})
+
 // JWT tokens
 userSchema.methods.generateAuthToken = async function () {
 
@@ -66,6 +75,19 @@ userSchema.methods.generateAuthToken = async function () {
 
     return token;
 
+}
+
+// Send only necessary info to back to the users. Password, tokens not needed
+
+userSchema.methods.toJSON =  function () {
+    const user = this;
+
+    const userObject = user.toObject();
+
+    delete userObject.password;
+    delete userObject.tokens;
+
+    return userObject;
 }
 
 // Login setup
@@ -94,6 +116,14 @@ userSchema.pre('save', async function(next) {
     next(); // Must run next fn so that the next actions after this fn gets executed
 })
 
+// Delete User tasks when user is deleted
+userSchema.pre('remove', async function (next) {
+    const user = this;
+    
+    await Task.deleteMany({owner: user._id})
+
+    next();
+})
 
 // create Model (constructor)
 const User = mongoose.model('User', userSchema)

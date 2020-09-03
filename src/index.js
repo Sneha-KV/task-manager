@@ -17,21 +17,53 @@ app.use(express.json());
 app.use(userRouter); // accessing User Route
 app.use(taskRouter); // accessing Task Route
 
+
+app.listen(port, ()=>{
+    console.log('Server started on port '+port)
+})
+
+// const Task = require('./models/task');
+
+const main = async () => {
+    // Get User from task
+    // const task = await Task.findById('5f4fd74c92c17b2dbd7b624d');
+    // await task.populate('owner').execPopulate()
+
+    // console.log(task.owner);
+
+    // Get Tasks from USER - Method 1
+    // const user = await User.findById('5f4bda07a1af61f39e7b82f3');
+    // const owner = user._id
+    // const tasks1 = await Task.find({owner});
+    // console.log(tasks1)
+
+    // Get Tasks from USER - Method 2, using virtual type
+
+    // const user = await User.findById('5f4bda07a1af61f39e7b82f3');
+    //  await user.populate('tasks').execPopulate();
+
+    // console.log(user.tasks)
+
+}
+
+// main()
+
+
+
 // hashing a password
 
 // const myFun = async () => {
 //     const token = jwt.sign({ _id: 'abc123'}, 'test123', { expiresIn: '7 days'})
 //     console.log(token);
-
-    
-
 //     console.log(jwt.verify(token, 'test123'))
 // }
 
 // myFun();
 
+// var test = {name: "Hell"}
+// test.toJSON  = function() {
+//     return { name: "Yess"}
+// }
+// console.log(JSON.stringify(test))
 // configuring the port
 
-app.listen(port, ()=>{
-    console.log('Server started on port '+port)
-})
