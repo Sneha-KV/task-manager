@@ -2,6 +2,8 @@ const express = require('express');
 // const bcrypt = require('bcryptjs');
 require('./db/mongoose.js');
 const jwt = require('jsonwebtoken');
+const path = require('path');
+const hbs = require('hbs');
 
 const User = require('./models/user.js') 
 const Task = require('./models/task.js') 
@@ -16,6 +18,28 @@ const port = process.env.PORT || 3000;
 app.use(express.json());
 app.use(userRouter); // accessing User Route
 app.use(taskRouter); // accessing Task Route
+
+// Client side incorporation - templates, styling, client side js
+const publicDirectoryPath = path.join(__dirname,'../public');
+const viewsPath = path.join(__dirname,'../templates/views' );
+const partialsPath = path.join(__dirname, '../templates/partials');
+
+// setting up handle bars
+app.set('view engine', 'hbs');
+app.set('views', viewsPath);
+hbs.registerPartials(partialsPath);
+
+// set up static directory
+app.use(express.static(publicDirectoryPath));
+
+// setting up dynamic templates
+app.get('', (req, res) => {
+    res.render('index', {
+        name: 'Sneha',
+        title: 'TASK MANAGER'
+    })
+})
+
 
 
 app.listen(port, ()=>{
