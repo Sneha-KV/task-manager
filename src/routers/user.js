@@ -1,4 +1,6 @@
 const express = require('express');
+const multer = require('multer');
+
 const User = require('../models/user');
 const auth = require('../middleware/auth');
 
@@ -128,6 +130,57 @@ router.delete('/users/me',auth, async (req, res) => {
         res.send(req.user);
     } catch (error) {
         res.status(500).send()
+    }
+})
+
+
+const upload = multer({
+    // dest: 'avatars',
+    limits: {
+        fileSize: 1000000
+    },
+    fileFilter(req, file, cb) {
+        if(!file.originalname.match(/\.(jpg|jpeg|png)$/)) return cb(new Error('Please upload images'));
+
+        return cb(undefined, true)
+    }
+})
+// upload profile picture
+router.post('/users/me/avatar',auth, upload.single('avatar'), async (req, res) => {
+    // if dest is not set in multer, it will pass img data to this function
+    req.user.avatar = req.file.buffer;
+    
+    await req.user.save();
+// <img src="data:image/png;base64,Binary-data"/> -> access the image like this, Binary-data is in avatar field
+    res.send()
+}, (error, req, res, next) => {
+    res.status(400).send({
+        error: error.message
+    })
+})
+
+// Delete profile picture
+router.delete('/users/me/avatar', auth, async (req, res) => {
+    try {
+        req.user.avatar = undefined;
+        await req.user.save();
+        res.send()
+    } catch(error) {
+        res.status(500).send(error);
+    }
+   
+})
+
+// View profile picture 
+router.get('/users/:id/avatar', async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id);
+        if(!user || !user.avatar) throw new Error();
+
+        res.set('Content-Type', 'image/jpg');
+        res.send(user.avatar);
+    } catch(error){
+        res.status(400).send();
     }
 })
 
