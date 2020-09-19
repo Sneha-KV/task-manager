@@ -3,6 +3,7 @@ const multer = require('multer');
 
 const User = require('../models/user');
 const auth = require('../middleware/auth');
+const { sendWelcomeEmail, sendGoodByeEmail } = require('../emails/account');
 
 const router = new express.Router();
 
@@ -14,6 +15,7 @@ router.post('/users', async (req, res)=> {
     console.log(req.body);
     try {
         await user.save();
+        sendWelcomeEmail(user.email, user.name);
         const token = await user.generateAuthToken()
         res.status(201).send({user, token});
     } catch (error) {
@@ -125,7 +127,10 @@ router.patch('/users/me', auth, async (req, res) => {
 router.delete('/users/me',auth, async (req, res) => {
     try {
         // const user = await User.findByIdAndDelete(req.user._id);
+        
         await req.user.remove();
+        // send good bye email once removed
+        sendGoodByeEmail(req.user.email, req.user.name);
         
         res.send(req.user);
     } catch (error) {
@@ -149,6 +154,7 @@ const upload = multer({
 router.post('/users/me/avatar',auth, upload.single('avatar'), async (req, res) => {
     // if dest is not set in multer, it will pass img data to this function
     req.user.avatar = req.file.buffer;
+    // const buffer = await (req.file.buffer).resize({ width: 250, height: 250}).png().toBuffer(); -> with sharp
     
     await req.user.save();
 // <img src="data:image/png;base64,Binary-data"/> -> access the image like this, Binary-data is in avatar field
@@ -178,6 +184,7 @@ router.get('/users/:id/avatar', async (req, res) => {
         if(!user || !user.avatar) throw new Error();
 
         res.set('Content-Type', 'image/jpg');
+        // res.set('Content-Type', 'image/png'); -> after sharp is installed
         res.send(user.avatar);
     } catch(error){
         res.status(400).send();
