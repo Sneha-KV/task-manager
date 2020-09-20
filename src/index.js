@@ -43,7 +43,7 @@ app.get('', (req, res) => {
 
 // File upload using multer
 // 
-
+console.log(process.env.MONGODB_URL,'-----', process.env.JWT_SECRET)
 app.listen(port, ()=>{
     console.log('Server started on port '+port)
 })

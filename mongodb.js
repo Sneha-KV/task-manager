@@ -6,8 +6,9 @@ const {MongoClient, ObjectID} = require('mongodb')
 // const ObjectID = mongodb.ObjectID;
 
 
-const connectionURL = 'mongodb://127.0.0.1:27017'; // local host IP and port, 
+const connectionURL = process.env.MONGODB_URL; // local host IP and port, 
 const databaseName = 'task-manager';
+
 
 // object Id generation
 const id = new ObjectID();

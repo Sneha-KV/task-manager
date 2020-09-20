@@ -1,7 +1,7 @@
 {
   "name": "task-manager",
   "version": "1.0.0",
-  "description": "",
+  "description": "/Users/skasugantivenkata/mongodb/bin/mongod --dbpath=/Users/skasugantivenkata/mongodb-data\r db.collection('name');\r db.collection('name').insertOne(record,callback)\r                      .insertMany()\r                      .findOne() ->FindOne always returns the first match\r                      .find() -> returns cursor/ pointer to the records",
   "main": "index.js",
   "scripts": {
     "start": "node src/index.js",
@@ -11,7 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@sendgrid/mail": "^7.2.5",
+    "@sendgrid/mail": "^7.2.6",
     "bcryptjs": "^2.4.3",
     "express": "^4.17.1",
     "hbs": "^4.1.1",

@@ -1,3 +1,5 @@
+// cmd: /Users/Sneha/mongodb/bin/mongod.exe --dbpath=/Users/Sneha/mongodb-data
+
 const mongoose = require('mongoose');
 
 const connectionUrl = 'mongodb://127.0.0.1:27017/task-manager-api';

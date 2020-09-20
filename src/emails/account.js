@@ -1,10 +1,10 @@
+// ./node_modules/.bin/env-cmd -f ./config/dev.env node src/index.js
 process.env.NODE_TLS_REJECT_UNAUTHORIZED='0'
 const sgMail = require('@sendgrid/mail')
-// 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
+//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
 
-const sendgridAPIKey = "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"
 // set api key
-sgMail.setApiKey(sendgridAPIKey);
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 const fromMail = 'project14218@gmail.com'
 // for a welcome mail
 const sendWelcomeEmail = (email, name) => {
