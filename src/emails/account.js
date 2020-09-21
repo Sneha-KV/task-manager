@@ -1,7 +1,7 @@
 // ./node_modules/.bin/env-cmd -f ./config/dev.env node src/index.js
 process.env.NODE_TLS_REJECT_UNAUTHORIZED='0'
 const sgMail = require('@sendgrid/mail')
-//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
+
 
 // set api key
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
